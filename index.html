@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  // Welcome to Labcoat. This code was generated through conversations with Codium and Claude Sonnet 3.5. Thank you for visiting.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labcoat - Futures</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: default;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: black;
+            mix-blend-mode: difference;
+        }
+
+        .menu-btn {
+            width: 30px;
+            height: 20px;
+            position: relative;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .menu-btn span {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: black;
+            transition: 0.3s;
+        }
+
+        .menu-btn span:nth-child(1) { top: 0; }
+        .menu-btn span:nth-child(2) { top: 9px; }
+        .menu-btn span:nth-child(3) { top: 18px; }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 3;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .menu-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .menu-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .menu-item {
+            color: white;
+            font-size: 2rem;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            opacity: 0.7;
+        }
+
+        .menu-item.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .menu-item.disabled::after {
+            content: " (Soon)";
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-btn:hover {
+            opacity: 0.7;
+        }
+
+        .manifesto-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 4;
+            display: none;
+            width: 600px;
+            max-width: 90vw;
+            cursor: move;
+        }
+
+        .manifesto-window.active {
+            display: block;
+        }
+
+        .manifesto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .manifesto-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+
+        .manifesto-close:hover {
+            opacity: 0.7;
+        }
+
+        .manifesto-content {
+            line-height: 1.6;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .menu-item {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <nav class="nav">
+        <div class="logo">LABCOAT</div>
+        <div class="menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div class="menu-overlay">
+        <div class="close-btn">×</div>
+        <div class="menu-content">
+            <div class="menu-item" id="manifesto-btn">Manifesto</div>
+            <div class="menu-item" onclick="window.open('https://github.com')">Github</div>
+            <div class="menu-item disabled">Mint</div>
+        </div>
+    </div>
+
+    <div class="manifesto-window">
+        <div class="manifesto-header">
+            <h2>Manifesto</h2>
+            <div class="manifesto-close">×</div>
+        </div>
+        <div class="manifesto-content">
+            <p>The world has changed. This is an age of intelligent machines, cryptographic public goods, and viral memes of global influence. The creatives of tomorrow will need more than they have now. They need a safe place to risk human futures - to embrace and understand that mastery of risk is the path to our survival. These creatives will need a lab, beyond latent space, and beyond anything we - as only human - can imagine.  Only by networking these humans together in concert, can we achieve collectively what our individualized libertarian economies can not. 
+              <p>A future lab - where only the most daring creatives can thrive and collaborate in real time. Can share work and ideas without effort, and can discover anything beyond what we have before. Only a few humans will be emotionally strong enough to cross over. To these, if we are lucky enough to find them, we will give -</p> 
+          <p> The labcoat. .</p>
+        </div>
+    </div>
+
+    <script>
+        // Three.js Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.querySelector('#canvas'),
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff, 1);
+
+        // Network Background
+        const particleCount = 150;
+        const particles = [];
+        const connections = [];
+        const maxDistance = 150;
+        const particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const lineGeometry = new THREE.BufferGeometry();
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0xcccccc,
+            transparent: true,
+            opacity: 0.3
+        });
+
+        // Create particles
+        for(let i = 0; i < particleCount; i++) {
+            const particle = {
+                position: new THREE.Vector3(
+                    (Math.random() - 0.5) * window.innerWidth * 0.8,
+                    (Math.random() - 0.5) * window.innerHeight * 0.8,
+                    (Math.random() - 0.5) * 100
+                ),
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.2,
+                    (Math.random() - 0.5) * 0.2,
+                    (Math.random() - 0.5) * 0.2
+                )
+            };
+            particles.push(particle);
+            positions[i * 3] = particle.position.x;
+            positions[i * 3 + 1] = particle.position.y;
+            positions[i * 3 + 2] = particle.position.z;
+        }
+
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0x888888,
+            size: 3,
+            transparent: true,
+            opacity: 0.6
+        });
+
+        const pointCloud = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(pointCloud);
+
+        // Central Card
+        const cardGeometry = new THREE.PlaneGeometry(9.28, 11.52);
+        const cardMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.9,
+            shininess: 100
+        });
+        const card = new THREE.Mesh(cardGeometry, cardMaterial);
+        scene.add(card);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        camera.position.z = 15;
+
+        // Animation variables
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+
+        function updateParticles() {
+            const positions = pointCloud.geometry.attributes.position.array;
+            const linePositions = [];
+
+            // Update particle positions
+            for(let i = 0; i < particles.length; i++) {
+                const particle = particles[i];
+                
+                // Update position
+                particle.position.add(particle.velocity);
+
+                // Boundary checking
+                if(Math.abs(particle.position.x) > window.innerWidth * 0.4) particle.velocity.x *= -1;
+                if(Math.abs(particle.position.y) > window.innerHeight * 0.4) particle.velocity.y *= -1;
+                if(Math.abs(particle.position.z) > 50) particle.velocity.z *= -1;
+
+                // Update geometry
+                positions[i * 3] = particle.position.x;
+                positions[i * 3 + 1] = particle.position.y;
+                positions[i * 3 + 2] = particle.position.z;
+
+                // Check connections
+                for(let j = i + 1; j < particles.length; j++) {
+                    const distance = particle.position.distanceTo(particles[j].position);
+                    if(distance < maxDistance) {
+                        linePositions.push(
+                            particle.position.x, particle.position.y, particle.position.z,
+                            particles[j].position.x, particles[j].position.y, particles[j].position.z
+                        );
+                    }
+                }
+            }
+
+            // Update particles
+            pointCloud.geometry.attributes.position.needsUpdate = true;
+
+            // Update connections
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+            scene.remove(scene.getObjectByName('connections'));
+            const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            lines.name = 'connections';
+            scene.add(lines);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update card rotation
+            targetRotationY = (mouseX - window.innerWidth / 2) * 0.0008;
+            targetRotationX = (mouseY - window.innerHeight / 2) * 0.0008;
+
+            card.rotation.x += (targetRotationX - card.rotation.x) * 0.05;
+            card.rotation.y += (targetRotationY - card.rotation.y) * 0.05;
+
+            // Add subtle floating motion
+            card.position.y = Math.sin(Date.now() * 0.001) * 0.2;
+
+            updateParticles();
+            renderer.render(scene, camera);
+        }
+
+        // Mouse movement handling
+        document.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
+
+        // Window resize handling
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Menu System
+        const menuBtn = document.querySelector('.menu-btn');
+        const menuOverlay = document.querySelector('.menu-overlay');
+        const closeBtn = document.querySelector('.close-btn');
+        const manifestoBtn = document.querySelector('#manifesto-btn');
+        const manifestoWindow = document.querySelector('.manifesto-window');
+        const manifestoClose = document.querySelector('.manifesto-close');
+
+        menuBtn.addEventListener('click', () => {
+            menuOverlay.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            menuOverlay.classList.remove('active');
+        });
+
+        manifestoBtn.addEventListener('click', () => {
+            menuOverlay.classList.remove('active');
+            manifestoWindow.classList.add('active');
+        });
+
+        manifestoClose.addEventListener('click', () => {
+            manifestoWindow.classList.remove('active');
+        });
+
+        // Draggable Manifesto Window
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+
+        manifestoWindow.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+            if (e.target === manifestoWindow || e.target.parentNode === manifestoWindow) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+                isDragging = true;
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                setTranslate(currentX, currentY, manifestoWindow);
+            }
+        }
+
+        function dragEnd() {
+            isDragging = false;
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+        }
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
